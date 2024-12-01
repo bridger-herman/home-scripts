@@ -1,0 +1,5 @@
+[Path]
+PathModified=/var/log/auth.log
+
+[Install]
+WantedBy=multi-user.target

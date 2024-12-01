@@ -1,0 +1,10 @@
+[Unit]
+Description=ssh access watcher service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/be/GitHub/home-scripts/ssh_access_log/copy_ssh_log.sh
+
+[Install]
+WantedBy=multi-user.target
