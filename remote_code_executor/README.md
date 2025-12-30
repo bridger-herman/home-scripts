@@ -16,3 +16,24 @@ In an attempt to make this slightly less insecure:
 - There's a list of "allowable named commands" which is configurable on the server side (commands.txt, separated by lines)
 - Commands should only be "read" commands (i.e., no modifying the file system)
 - If the command from the client doesn't match the one in the commands.txt exactly, it's ignored
+
+
+## Installation
+
+Copy the executor-server.service systemd service into `/etc/systemd/system`.
+Make any necessary changes (e.g., the path to this folder), then enable and start the service.
+
+```
+sudo cp executor-server.service /etc/systemd/system
+sudo vim /etc/systemd/system/executor-server.service # for example
+sudo systemctl enable executor-server
+sudo systemctl start executor-server
+```
+
+
+> [!TIP]
+> After updating `commands.txt` with new commands, make sure to restart the
+> server.
+> ```
+> sudo systemctl restart executor-server
+> ```

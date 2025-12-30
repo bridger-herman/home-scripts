@@ -5,6 +5,8 @@
 # Command name should only be alphabetic characters and underscores.
 # command names must be unique
 # '#' is comments
+#
+# Remember to restart the server after changing this file (see README)
 
 # Authorization commands
 sshd_log: cat /var/log/auth.log | grep ssh    # check the sshd authorization log

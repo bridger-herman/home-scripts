@@ -49,7 +49,7 @@ class ExecuteHandler(SimpleHTTPRequestHandler):
             resp = cmd_output
 
             self.send_response(200)
-            self.send_header("Content-type", "text/html")
+            self.send_header("Content-type", "text/plain")
             self.send_header("Content-length", len(resp))
             self.end_headers()
             self.wfile.write(resp)
