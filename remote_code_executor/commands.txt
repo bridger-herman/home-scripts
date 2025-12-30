@@ -1,0 +1,26 @@
+# commands.txt
+# format:
+# command_name: command [args]
+#
+# Command name should only be alphabetic characters and underscores.
+# command names must be unique
+# '#' is comments
+
+# Authorization commands
+sshd_log: cat /var/log/auth.log | grep ssh    # check the sshd authorization log
+
+# HDD health commands
+# From https://sdx1.net/info/hardware/smart-seagate/
+# Seagate drives encode their SMART read/write errors in a non-standard way
+# Two most-significant bytes of the RAW_VALUE indicate the actual error count,
+# the rest of the number indicates the total number of operations
+check_smart_sdc: sudo smartctl -a -v 1,hex48 -v 7,hex48 /dev/sdc     # check HDD in the RAID-1 array
+check_smart_sdd: sudo smartctl -a -v 1,hex48 -v 7,hex48 /dev/sdd     # check HDD in the RAID-1 array
+check_read_sdc: sudo smartctl -A -v 1,hex48 -v 7,hex48 /dev/sdc | head -n 8 | tail -n 1 | grep -o '0x[0-9A-F]\{4\}' # more detailed versions of the above, show raw value
+check_seek_sdc: sudo smartctl -A -v 1,hex48 -v 7,hex48 /dev/sdc | head -n 12 | tail -n 1 | grep -o '0x[0-9A-F]\{4\}' # more detailed versions of the above, show raw value
+check_read_sdd: sudo smartctl -A -v 1,hex48 -v 7,hex48 /dev/sdd | head -n 8 | tail -n 1 | grep -o '0x[0-9A-F]\{4\}' # more detailed versions of the above, show raw value
+check_seek_sdd: sudo smartctl -A -v 1,hex48 -v 7,hex48 /dev/sdc | head -n 12 | tail -n 1 | grep -o '0x[0-9A-F]\{4\}' # more detailed versions of the above, show raw value
+check_raid: sudo mdadm --detail /dev/md0    # check the RAID-1 array
+
+# Network commands
+check_ports: sudo ss -tunlp     # check for all open ports

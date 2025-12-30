@@ -1,0 +1,17 @@
+# Copy this file into /etc/systemd/system
+#
+# As root, run `systemctl enable executor-server.service`
+[Unit]
+Description=Command Executor Server
+After=network.target
+
+[Service]
+Type=simple
+User=yourusername
+WorkingDirectory=[[[path to wherever you put the executor_server.py and commands.txt files]]]
+ExecStart=python3 executor_server.py
+Restart=on-failure
+# Other restart options: always, on-abort, etc
+
+[Install]
+WantedBy=default.target
