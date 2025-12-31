@@ -9,7 +9,9 @@
 # Remember to restart the server after changing this file (see README)
 
 # Authorization commands
-sshd_log: cat /var/log/auth.log | grep ssh    # check the sshd authorization log
+# Check the latest entry from the SSH access log and turn into JSON
+# Fields: timestamp, user, ip
+check_latest_ssh: gawk '{ match($0, /([0-9]{4}-[0-9]{2}-[0-9]{2}T([0-9]{2}:?){3}).*sshd.* Accepted publickey for (\w+) from ([0-9.]+)/, m); if (length(m) > 0) {printf "{\"timestamp\": \"%s\", \"user\": \"%s\", \"ip\": \"%s\"}\n", m[1], m[3], m[4]}}' /var/log/auth.log | tail -n 1
 
 # HDD health commands
 # From https://sdx1.net/info/hardware/smart-seagate/
@@ -18,11 +20,14 @@ sshd_log: cat /var/log/auth.log | grep ssh    # check the sshd authorization log
 # the rest of the number indicates the total number of operations
 check_smart_sdc: sudo smartctl -a -v 1,hex48 -v 7,hex48 /dev/sdc     # check HDD in the RAID-1 array
 check_smart_sdd: sudo smartctl -a -v 1,hex48 -v 7,hex48 /dev/sdd     # check HDD in the RAID-1 array
+check_raid: sudo mdadm --detail /dev/md0    # check the RAID-1 array
+
 check_read_sdc: sudo smartctl -A -v 1,hex48 -v 7,hex48 /dev/sdc | head -n 8 | tail -n 1 | grep -o '0x[0-9A-F]\{4\}' # more detailed versions of the above, show raw value
 check_seek_sdc: sudo smartctl -A -v 1,hex48 -v 7,hex48 /dev/sdc | head -n 12 | tail -n 1 | grep -o '0x[0-9A-F]\{4\}' # more detailed versions of the above, show raw value
 check_read_sdd: sudo smartctl -A -v 1,hex48 -v 7,hex48 /dev/sdd | head -n 8 | tail -n 1 | grep -o '0x[0-9A-F]\{4\}' # more detailed versions of the above, show raw value
 check_seek_sdd: sudo smartctl -A -v 1,hex48 -v 7,hex48 /dev/sdc | head -n 12 | tail -n 1 | grep -o '0x[0-9A-F]\{4\}' # more detailed versions of the above, show raw value
-check_raid: sudo mdadm --detail /dev/md0    # check the RAID-1 array
+check_raid_sdc: sudo mdadm --detail /dev/md0 | gawk '{ match($0, /^(\s+[0-9]+){4}\s+(.+)\s+\/dev\/sdc/, m); if (length(m) > 0) { printf "%s\n", m[2] }}' # raid health detail statusline for each drive
+check_raid_sdd: sudo mdadm --detail /dev/md0 | gawk '{ match($0, /^(\s+[0-9]+){4}\s+(.+)\s+\/dev\/sdd/, m); if (length(m) > 0) { printf "%s\n", m[2] }}' # raid health detail statusline for each drive
 
 # Network commands
 check_ports: sudo ss -tunlp     # check for all open ports
